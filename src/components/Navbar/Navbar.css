@@ -1,0 +1,19 @@
+.dropdown-menu{
+    right: 0 !important;
+    left: auto !important;
+}
+.profileTab{
+    display: flex !important;
+    position: relative;
+    top: 5px;
+}
+.profileTab img{
+    border-radius: 50%;
+    border: 3px solid white;
+}
+.profileTab div{
+    padding-left: .8rem;
+}
+.profileTab{
+    padding-bottom: .5rem;
+}

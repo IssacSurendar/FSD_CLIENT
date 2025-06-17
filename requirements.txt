@@ -1,0 +1,29 @@
+Admin
+    Menu
+        project
+            create project - done
+            update project - done
+            delete project - done
+        user
+            create user - done
+            update user - done
+            delete user - done
+
+        Task
+            create task - done
+            update task - done
+            delete task - done
+
+
+Tast Tracker
+    Menu
+        Task
+            create task - done
+            update task - done
+            delete task - done
+
+User
+    Menu (dont show project and user) 
+        Task
+            update task - done
+    
