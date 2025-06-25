@@ -3,11 +3,13 @@ import { useState, useEffect } from 'react'
 import { GoogleLogin } from '@react-oauth/google';
 import {jwtDecode} from 'jwt-decode';
 import { Link, useNavigate } from 'react-router-dom';
+import { Alert } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { loginUser, logout, setCredentials } from '../../features/auth/authSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import logo from '../../assets/logo.png'
+import authService from '../../features/auth/authService';
 
 export default function Login(){
 
@@ -16,6 +18,18 @@ export default function Login(){
         email: '',
         password: ''
     })
+    const [apiMessage, setApiMessage] = useState('')
+    const [apiMessageShow, setApiMessageShow] = useState(false);
+
+
+
+    useEffect(() => {
+        if (apiMessageShow) {
+          const timer = setTimeout(() => {setApiMessageShow(false), setApiMessage('')}, 3000); // 5 seconds
+          return () => clearTimeout(timer); // Cleanup on unmount or rerun
+        }
+    }, [apiMessageShow]);
+
     const navigate = useNavigate();
 
     const dispatch = useDispatch();
@@ -35,10 +49,34 @@ export default function Login(){
     async function handleSubmit(e){
         e.preventDefault()
         formData['sso'] = false
-        const response = await dispatch(loginUser(formData)).unwrap();
-        if (response?.message == 'Loggedin successfully'){
-            navigate('/')
+        try{
+            const response = await dispatch(loginUser(formData)).unwrap();
+            if (response?.message == 'Loggedin successfully'){
+                navigate('/')
+            }
+        }catch{
+            setApiMessageShow(true);
+            setApiMessage('Invalid credentials')
         }
+    }
+
+    async function sso_login(user_info){
+        let payload = {
+            email: user_info?.email,
+            username: user_info?.name,
+            picture: user_info?.picture,
+            sso: true
+        }
+        try{
+            const response = await dispatch(loginUser(payload)).unwrap();
+            if (response?.message == 'Loggedin successfully'){
+                navigate('/')
+            }
+        }catch(error){
+            setApiMessageShow(true);
+            setApiMessage('Invalid credentials')
+        }
+        
     }
 
     useEffect(() => {
@@ -52,7 +90,7 @@ export default function Login(){
             navigate('/')
         }
     }, [])
-
+ 
 
 
     return (
@@ -60,7 +98,12 @@ export default function Login(){
             <img src={logo} width="85px" alt="df"/>
             <h5 className='fw-bold mt-3'>LOGIN</h5>
             <hr className='mt-1'/>
-
+            {apiMessageShow && (
+                <Alert className='p-2 m-0' variant="danger" dismissible onClose={() => setApiMessageShow(false)}>
+                    <Alert.Heading className='h5 mb-1 mt-0'>Login Failed</Alert.Heading>
+                    <small>{apiMessage}</small>
+                </Alert>
+            )}
             <Form onSubmit={handleSubmit}>
                 <Form.Group className="mb-2" controlId="exampleForm.ControlInput1">
                     <Form.Label className='fw-bold small'>Email address</Form.Label>
@@ -74,9 +117,10 @@ export default function Login(){
             </Form>
 
             <GoogleLogin
-                    onSuccess={(credentialResponse) => {
+                    onSuccess={async (credentialResponse) => {
                     const decoded = jwtDecode(credentialResponse.credential);
-                    console.log('User Info:', decoded);
+                        // console.log('User Info:', decoded);
+                        await sso_login(decoded)
                     }}
                     onError={() => {
                     console.log('Login Failed');

@@ -14,6 +14,7 @@ import CustomUpdateTaskCanvas from '../../components/OffCanvasEnd/Task/updateTas
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import userService from '../../features/user/userService';
 import projectService from '../../features/project/projectService';
+import { Alert } from 'react-bootstrap';
 
 
 
@@ -26,6 +27,7 @@ export default  function Dashboard(){
     const [editShow, setEdiShow] = useState(false);
     const handleEditClose = () => setEdiShow(false);
     const handleEditShow = () => setEdiShow(true);
+    const [apiMessageShow, setApiMessageShow] = useState(false);
 
 
     // setAUth(user)
@@ -52,7 +54,7 @@ export default  function Dashboard(){
             taskService.updateTask(formData)
             getTask()
             handleEditClose()
-            console.log("afterinsert", task)
+            setApiMessageShow(true);
         }else{
             alert('Please change the status')
         }
@@ -187,12 +189,17 @@ export default  function Dashboard(){
           // setFormData(intialFormData)
           await getTask()
           updateHandleClose()
+          setApiMessageShow(true);
         }
       }
 
-    function dateFormat(date){
-        return 'date'
-    }
+      useEffect(() => {
+        if (apiMessageShow) {
+          const timer = setTimeout(() => {setApiMessageShow(false)}, 2000); // 5 seconds
+          return () => clearTimeout(timer); // Cleanup on unmount or rerun
+        }
+      }, [apiMessageShow]);
+
 
     return (
         <div>
@@ -206,6 +213,13 @@ export default  function Dashboard(){
                     )
                 }
             </div>
+
+
+            {apiMessageShow && (
+                <Alert className='p-2 m-0 mt-2' variant="success" dismissible onClose={() => setApiMessageShow(false)}>
+                    <small>Task updated successfully.</small>
+                </Alert>
+            )}
 
             <Table striped bordered hover size="sm" className='mt-3'>
                 <thead> 
@@ -225,7 +239,7 @@ export default  function Dashboard(){
                 {
                     task.length === 0 ? (
                         <tr>
-                            <td key="1" colSpan="8"><small>No task found.</small></td>
+                            <td key="1" colSpan="9"><small>No task found.</small></td>
                         </tr>
                     ) 
                     : 
@@ -372,27 +386,30 @@ export default  function Dashboard(){
                 <Modal.Header closeButton>
                     <Modal.Title>
                         {taskModal?.title}
+                        
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <div>
                         <div ><small><b>Description : </b></small></div>
-                        {taskModal?.description}
+                    <div>
+                    <small>{taskModal?.description}</small></div>
+                        
                     </div>
                     <Form onSubmit={handleSubmit} >
                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                            <Form.Label><small><b>Status : </b></small></Form.Label>
-                            <Form.Select name="status" onChange={handleChange} aria-label="Default select example">
+                            <Form.Label className='mt-2'><small><b>Status : </b></small></Form.Label>
+                            <Form.Select name="status" className='mb-3' onChange={handleChange} aria-label="Default select example">
                                 {
                                     status.map((val, idx) => (
                                         <option key={val} value={val}>{val}</option>
                                     ))
                                 }
                             </Form.Select>
-                            <Button type="submit" variant="primary">
+                            <Button type="submit" className='modalBtns' variant="primary">
                                 Submit
                             </Button>
-                            <Button variant="secondary" onClick={handleEditClose}>
+                            <Button variant="secondary" className='modalBtns' onClick={handleEditClose}>
                                 Close
                             </Button>
                         </Form.Group>

@@ -9,6 +9,8 @@ import * as Icon from 'react-bootstrap-icons';
 import userService from '../../features/user/userService';
 import { UserRole } from '../../utils/constants';
 import Form from 'react-bootstrap/Form';
+import { Alert } from 'react-bootstrap';
+
 
 export default function User(){
 
@@ -18,8 +20,8 @@ export default function User(){
     const [editShow, setEdiShow] = useState(false);
     const handleEditClose = () => setEdiShow(false);
     const handleEditShow = () => setEdiShow(true);
+    const [apiMessageShow, setApiMessageShow] = useState(false);
     const [userModal, setUserModal] = useState({});
-    console.log("User", userModal)
     const [role, setUserRole] = useState([])
 
     const {user} = useSelector((state) => state.auth)
@@ -37,7 +39,6 @@ export default function User(){
         if(user?.role != 'Admin'){
             navigate('/access-denied')
         }
-        console.log(userModal)
     }, [])
 
     async function deleteUserById(id){
@@ -68,6 +69,7 @@ export default function User(){
         userService.updateUser(formData)
         getUsers()
         handleEditClose()
+        setApiMessageShow(true)
     }
 
     function updateStatus(i){
@@ -87,7 +89,12 @@ export default function User(){
         // console.log(userModal)
     }
 
-
+    useEffect(() => {
+        if (apiMessageShow) {
+          const timer = setTimeout(() => {setApiMessageShow(false)}, 2000); // 5 seconds
+          return () => clearTimeout(timer); // Cleanup on unmount or rerun
+        }
+      }, [apiMessageShow]);
 
 
     return (
@@ -96,6 +103,12 @@ export default function User(){
                 <span className='mb-3'><b>USERS</b></span>
                 <CustomCanvas className="float-end" position='end' title='Add User' onSubmit={getUsers}/>
             </div>
+
+            {apiMessageShow && (
+                    <Alert className='p-2 m-0 mt-2' variant="success" dismissible onClose={() => setApiMessageShow(false)}>
+                        <small>User updated successfully.</small>
+                    </Alert>
+            )}
 
             <Table striped bordered hover size="sm" className='mt-3'>
                 <thead>

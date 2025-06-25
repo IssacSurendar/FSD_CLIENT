@@ -12,6 +12,12 @@
 .Open{
     background: #0d6efd;
 }
+.Pending, .Closed{
+    background: red;
+}
+.Completed{
+    background-color: green;
+}
 .radio{
     color: white;
     font-weight: bold;
@@ -82,4 +88,8 @@ button{
 .modalbtn{
     width: 100%;
     height: 40px !important;
+}
+.modalBtns {
+    padding: 0 20px !important;
+    height: 33px !important;
 }

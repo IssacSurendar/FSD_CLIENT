@@ -8,6 +8,7 @@ import authService from '../../../features/auth/authService';
 import taskService from '../../../features/task/taskService';
 import userService from '../../../features/user/userService';
 import * as Icon from 'react-bootstrap-icons';
+import { Alert } from 'react-bootstrap';
 
 
 function OffCanvasExamples({ name, onTaskCreate, ...props }) {
@@ -16,6 +17,8 @@ function OffCanvasExamples({ name, onTaskCreate, ...props }) {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+    const [apiMessageShow, setApiMessageShow] = useState(false);
+
 
     const intialFormData = {
       title: '',
@@ -69,14 +72,27 @@ function OffCanvasExamples({ name, onTaskCreate, ...props }) {
         setFormData(intialFormData)
         onTaskCreate()
         handleClose()
+        setApiMessageShow(true);
       }
     }
+
+    useEffect(() => {
+      if (apiMessageShow) {
+        const timer = setTimeout(() => {setApiMessageShow(false)}, 2000); // 5 seconds
+        return () => clearTimeout(timer); // Cleanup on unmount or rerun
+      }
+    }, [apiMessageShow]);
   
     return (
       <>
         <Button variant="primary" onClick={handleShow} className={props.class + ' cbtn'}>
           <Icon.PlusLg></Icon.PlusLg>&nbsp;Create Task
         </Button>
+        {apiMessageShow && (
+                <Alert className='p-2 m-0 mt-2' variant="success" dismissible onClose={() => setApiMessageShow(false)}>
+                    <small>Task created successfully.</small>
+                </Alert>
+            )}
         <Offcanvas show={show} onHide={handleClose} {...props}>
           <Offcanvas.Header closeButton>
             <Offcanvas.Title className='me-auto'>Create Task</Offcanvas.Title>
@@ -85,15 +101,15 @@ function OffCanvasExamples({ name, onTaskCreate, ...props }) {
           <Form onSubmit={handleSubmit}>
             <Form.Group className="mb-2" controlId="exampleForm.ControlInput1">
               <Form.Label className='small mb-1 fw-bold'>Name</Form.Label>
-              <Form.Control type="text" onChange={handleChange} name="title" value={formData.title}/>
+              <Form.Control type="text" required onChange={handleChange} name="title" value={formData.title}/>
             </Form.Group>
             <Form.Group className="mb-2" controlId="exampleForm.ControlTextarea1">
               <Form.Label className='small mb-1 fw-bold'>Description</Form.Label>
-              <Form.Control as="textarea" rows={2} onChange={handleChange} name="description" value={formData.description}/>
+              <Form.Control as="textarea" required rows={2} onChange={handleChange} name="description" value={formData.description}/>
             </Form.Group>
             <Form.Group className="mb-2" controlId="exampleForm.ControlInput2">
               <Form.Label className='small mb-1 fw-bold'>Project</Form.Label>
-              <Form.Select aria-label="Default select example" onChange={handleChange} name="project" value={formData.project}>
+              <Form.Select aria-label="Default select example" required onChange={handleChange} name="project" value={formData.project}>
                 <option value='' disabled>Select project</option>
                 {
                   project.map((i) => (
@@ -104,7 +120,7 @@ function OffCanvasExamples({ name, onTaskCreate, ...props }) {
             </Form.Group>
             <Form.Group className="mb-2" controlId="exampleForm.ControlInput4">
               <Form.Label className='small mb-1 fw-bold'>Assign To</Form.Label>
-              <Form.Select aria-label="Default select exampl2" onChange={handleChange} name="assigned_to" value={formData.assigned_to}>
+              <Form.Select aria-label="Default select exampl2" required onChange={handleChange} name="assigned_to" value={formData.assigned_to}>
                 <option value=''>Select user</option>
                 {
                   userRole.map((i) => (
@@ -115,11 +131,11 @@ function OffCanvasExamples({ name, onTaskCreate, ...props }) {
             </Form.Group>
             <Form.Group className="mb-2" controlId="exampleForm.ControlInput1">
               <Form.Label className='small mb-1 fw-bold'>Due Date</Form.Label>
-              <Form.Control type="datetime-local" onChange={handleChange} name="due_date" value={formData.due_date}/>
+              <Form.Control type="datetime-local" required onChange={handleChange} name="due_date" value={formData.due_date}/>
             </Form.Group>
             <Form.Group className="mb-3" controlId="exampleForm.ControlInput3">
               <Form.Label className='small mb-1 fw-bold'>Status</Form.Label>
-              <Form.Select aria-label="Default select exampl1" onChange={handleChange} name="status" value={formData.status}>
+              <Form.Select aria-label="Default select exampl1" required onChange={handleChange} name="status" value={formData.status}>
                 <option value="" disabled>Select status</option>
                 <option value="Pending">Pending</option>
                 <option value="InProgress">In Progress</option>

@@ -9,6 +9,8 @@ import CreateProjectCanvas from '../../components/OffCanvasEnd/Project/Project';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import { formatDate, ProjectStatus } from '../../utils/constants';
+import { Alert } from 'react-bootstrap';
+
 
 
  
@@ -20,6 +22,8 @@ export default function Project(){
     const handleEditShow = () => setEdiShow(true);
     const [taskModal, setTaskModal] = useState({})
     const [status, setTaskStatus] = useState([])
+    const [apiMessageShow, setApiMessageShow] = useState(false);
+    const [newStatus, setNewStatus] = useState('')
 
     const dispatch = useDispatch();
     const navigate = useNavigate()
@@ -72,6 +76,7 @@ export default function Project(){
             [name]: value
         }))
         if(name == 'status'){
+            console.log(e?.target)
             setNewStatus(e?.target?.value)
         }
     }
@@ -87,8 +92,15 @@ export default function Project(){
         projectService.updateProject(formData)
         getProject()
         handleEditClose()
+        setApiMessageShow(true)
     }
 
+    useEffect(() => {
+        if (apiMessageShow) {
+          const timer = setTimeout(() => {setApiMessageShow(false)}, 2000); // 5 seconds
+          return () => clearTimeout(timer); // Cleanup on unmount or rerun
+        }
+      }, [apiMessageShow]);
 
     return (
         <div>
@@ -97,6 +109,13 @@ export default function Project(){
             
                 <CreateProjectCanvas className="float-end" position='end' title='Create Project' onSubmit={getProject}/>
             </div>
+
+            
+            {apiMessageShow && (
+                    <Alert className='p-2 m-0 mt-2' variant="success" dismissible onClose={() => setApiMessageShow(false)}>
+                        <small>Project updated successfully.</small>
+                    </Alert>
+            )}
 
             <Table striped bordered hover size="sm" className='mt-3'>
                 <thead>

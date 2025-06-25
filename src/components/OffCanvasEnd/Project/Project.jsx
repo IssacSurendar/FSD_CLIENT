@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import Form from 'react-bootstrap/Form';
@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux';
 import projectService from '../../../features/project/projectService'
 import getProject from '../../../pages/Project/Project'
 import * as Icon from 'react-bootstrap-icons';
+import { Alert } from 'react-bootstrap';
 
 
 
@@ -15,6 +16,7 @@ function OffCanvasExample({ name, onSubmit, ...props }) {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+    const [apiMessageShow, setApiMessageShow] = useState(false);
 
     const intialFormData = {
       name: '',
@@ -39,16 +41,31 @@ function OffCanvasExample({ name, onSubmit, ...props }) {
         setFormData(intialFormData)
         handleClose()
         onSubmit();
+        setApiMessageShow(true);
       }else{
         alert(response?.message)
       }
     }
+
+    useEffect(() => {
+      if (apiMessageShow) {
+        const timer = setTimeout(() => {setApiMessageShow(false)}, 2000); // 5 seconds
+        return () => clearTimeout(timer); // Cleanup on unmount or rerun
+      }
+    }, [apiMessageShow]);
   
     return (
       <>
         <Button variant="primary" onClick={handleShow} className={props.class+ ' cubtn'}>
           <Icon.PlusLg></Icon.PlusLg>&nbsp;{name}
         </Button>
+
+        {apiMessageShow && (
+                <Alert className='p-2 m-0 mt-2' variant="success" dismissible onClose={() => setApiMessageShow(false)}>
+                    <small>Project created successfully.</small>
+                </Alert>
+        )}
+
         <Offcanvas show={show} onHide={handleClose} {...props}>
           <Offcanvas.Header closeButton>
             <Offcanvas.Title className='me-auto'>Create Project</Offcanvas.Title>

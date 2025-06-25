@@ -1,5 +1,5 @@
 export const TaskStatus = ['Pending', 'InProgress', 'Hold', 'Completed']
-export const ProjectStatus = ['Open', 'In Progress', 'Hold', 'Completed', 'Closed']
+export const ProjectStatus = ['Open', 'InProgress', 'Hold', 'Completed', 'Closed']
 export const UserRole = ['Admin', 'TaskCreator', 'User']
 
 export const formatDate = (isoString) => {
