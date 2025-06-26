@@ -66,7 +66,7 @@ function OffCanvasExamples({ name, onTaskCreate, ...props }) {
 
     async function handleSubmit(e){
       e.preventDefault()
-      formData['owner'] = user?.id
+      formData['owner'] = user?.user_meta_id
       const response = await taskService.createTask(formData)
       if(response?.result){
         setFormData(intialFormData)
