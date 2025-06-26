@@ -5,7 +5,7 @@ import { handleUserLogout } from "./auth";
 // let { user, token, loading, error } = useSelector((state) => state.auth)
 // const token = localStorage.getItem('token')
 // console.log(token)
-axios.defaults.baseURL = 'http://localhost:8000'
+axios.defaults.baseURL = 'http://13.200.215.99:8000'
 // axios.defaults.headers.post['Content-Type'] = 'application/json';
 
 // axios.interceptors.request.use((value) => {
