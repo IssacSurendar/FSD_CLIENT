@@ -76,8 +76,6 @@ function CustomNavbar() {
                 ) :(
                   <Nav className="ms-auto">
                     <Nav.Link  as={Link} to="/login"><Icon.BoxArrowInRight/> Login</Nav.Link>
-
-                    
                   </Nav>
                 )
               }
